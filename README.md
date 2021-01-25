@@ -1,4 +1,4 @@
-# # tddish
+# tddish
 
 ## Usage
 tddish \<pyhton filename\> [\<argname\>=\<argvalue\> \<argname\>=\<argvalue\> ...]
