@@ -1,4 +1,4 @@
-# tddish
+# # tddish
 
 ## Usage
 tddish \<pyhton filename\> [\<argname\>=\<argvalue\> \<argname\>=\<argvalue\> ...]
@@ -14,16 +14,16 @@ tddish app1.py debug=enabled maxdepth=100 level=super
 ```
 def add(n1:int, n2:int) -> int:
     return n1 + n2
-'''tdd
-tdd('add():1", add(2,3) == 5)
-tdd('add():2", add(0,3) != 2)
+'''tddish
+tddish('add():1", add(2,3) == 5)
+tddish('add():2", add(0,3) != 2)
 '''
 ```
-The docstring (starting with ‘’’tdd) tells the tddish that the code within the docstring is test code. The tdd() function is like the python assert. It takes two parameters, 1. the test-case name and 2. the test condition. If the condition is False, it reports the test case as failed. so, tdd(“test1”, add(1,1) == 3) would fail. The test-case name should be such that the coder can easily search for it in the code. One way of naming test case is to use the function name and a seq num together (as shown in the code above).
+The docstring (starting with ‘’’tdd) tells the tddish that the code within the docstring is test code. The tddish() function is like the python assert. It takes two parameters, 1. the test-case name and 2. the test condition. If the condition is False, it reports the test case as failed. so, tddish(“test1”, add(1,1) == 3) would fail. The test-case name should be such that the coder can easily search for it in the code. One way of naming test case is to use the function name and a seq num together (as shown in the code above).
 
 ### Testing with data
 
-The *tdd* docstring can contain any valid python code. This can be used to define data to test a function. E.g
+The *tddish* docstring can contain any valid python code. This can be used to define data to test a function. E.g
 
 ```
 # mycode.py
@@ -31,10 +31,10 @@ def srch(needle:str, hay:list):
     if needle in hay:
         return True
     return False
-'''tdd
+'''tddish
 hay = ['ab', 'bc', 'cd']
-tdd('srch()1:', srch('ab', hay))
-tdd('srch()1:', srch('de', hay) == False)
+tddish('srch()1:', srch('ab', hay))
+tddish('srch()1:', srch('de', hay) == False)
 '''
 ```
 
@@ -51,9 +51,9 @@ def verify_user(s:str):
     if s == args['user']:
         return True
     return False
-'''tdd
-tdd('verify_user()1:', verify_user('Harrier'))
-tdd('verify_user()1:', verify_user('Falcon') == False)
+'''tddish
+tddish('verify_user()1:', verify_user('Harrier'))
+tddish('verify_user()1:', verify_user('Falcon') == False)
 '''
 ```
 
