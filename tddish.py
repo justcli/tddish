@@ -7,11 +7,10 @@ from __future__ import print_function\n\
 import sys\n\
 global __name__\n\
 global tdd_stderr\n\
+__name__ = '__tdd__'\n\
 tdd_stderr=sys.stderr\n\
 global __name__\n\
 def tddish(name, condition):\n\
-    global tdd_stderr\n\
-    __name__ = '__tdd__'\n\
     print('Test : ' + name, end='..........', file=tdd_stderr)\n\
     if not condition:\n\
         if tdd_stderr.isatty():\n\
@@ -23,16 +22,15 @@ def tddish(name, condition):\n\
         print('\\033[92m' + 'passed' + '\\033[0m', file=tdd_stderr)\n\
     else:\n\
         print('passed', file=tdd_stderr)\n\
-    return True\n\n"
+\n\n"
 
 insert_code3 = "\n\
 import sys\n\
 global __name__\n\
 global tdd_stderr\n\
+__name__ = '__tdd__'\n\
 tdd_stderr=sys.stderr\n\
 def tddish(name, condition):\n\
-    global tdd_stderr\n\
-    __name__ = '__tdd__'\n\
     print('Test : ' + name, end='..........', file=tdd_stderr)\n\
     if not condition:\n\
         if tdd_stderr.isatty():\n\
@@ -44,7 +42,7 @@ def tddish(name, condition):\n\
         print('\\033[92m' + 'passed' + '\\033[0m', file=tdd_stderr)\n\
     else:\n\
         print('passed', file=tdd_stderr)\n\
-    return True\n\n"
+\n\n"
 
 if __name__ == '__main__':
     '''
