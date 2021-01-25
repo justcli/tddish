@@ -9,7 +9,7 @@ global __name__\n\
 global tdd_stderr\n\
 tdd_stderr=sys.stderr\n\
 global __name__\n\
-def tdd(name, condition):\n\
+def tddish(name, condition):\n\
     global tdd_stderr\n\
     __name__ = '__tdd__'\n\
     print('Test : ' + name, end='..........', file=tdd_stderr)\n\
@@ -30,7 +30,7 @@ import sys\n\
 global __name__\n\
 global tdd_stderr\n\
 tdd_stderr=sys.stderr\n\
-def tdd(name, condition):\n\
+def tddish(name, condition):\n\
     global tdd_stderr\n\
     __name__ = '__tdd__'\n\
     print('Test : ' + name, end='..........', file=tdd_stderr)\n\
@@ -103,7 +103,7 @@ if __name__ == '__main__':
         for line in src_fp:
             if line.startswith('#!'):
                 continue
-            if line == "'''tdd\n":
+            if line == "'''tddish\n":
                 flag = 1
                 continue
             elif line == "'''\n" and flag == 1:
