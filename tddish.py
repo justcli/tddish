@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 import os
+import sys
 
-insert_code2 = "\n\
+_insert_code2 = "\n\
 from __future__ import print_function\n\
 import sys\n\
 global __name__\n\
@@ -11,7 +12,10 @@ __name__ = '__tdd__'\n\
 tdd_stderr=sys.stderr\n\
 global __name__\n\
 def tddish(name, condition):\n\
-    print('Test : ' + name, end='..........', file=tdd_stderr)\n\
+    space = '.' * 64\n\
+    space = space.replace('.', 'Test : ' + name, 1)[:64]\n\
+    #print('Test : ' + name, end='..........', file=tdd_stderr)\n\
+    print(space, end='', file=tdd_stderr)\n\
     if not condition:\n\
         if tdd_stderr.isatty():\n\
             print('\\033[91m' + 'failed' + '\\033[0m', file=tdd_stderr)\n\
@@ -27,14 +31,17 @@ def tddump(s:str):\n\
     print(s, file=tdd_stderr)\n\
 \n\n"
 
-insert_code3 = "\n\
+_insert_code3 = "\n\
 import sys\n\
 global __name__\n\
 global tdd_stderr\n\
 __name__ = '__tdd__'\n\
 tdd_stderr=sys.stderr\n\
 def tddish(name, condition):\n\
-    print('Test : ' + name, end='..........', file=tdd_stderr)\n\
+    space = '.' * 64\n\
+    space = space.replace('.', 'Test : ' + name, 1)[:64]\n\
+    #print('Test : ' + name, end='..........', file=tdd_stderr)\n\
+    print(space, end='', file=tdd_stderr)\n\
     if not condition:\n\
         if tdd_stderr.isatty():\n\
             print('\\033[91m' + 'failed' + '\\033[0m', file=tdd_stderr)\n\
@@ -50,6 +57,7 @@ def tddump(s:str):\n\
     print(s, file=tdd_stderr)\n\
 \n\n"
 
+global tdd_stderr
 if __name__ == '__main__':
     '''
     The tddish tool does the followings:
@@ -64,11 +72,11 @@ if __name__ == '__main__':
     import stat
     import sys
     from shutil import copyfile
-    insert_code = ''
+    _insert_code = ''
     if  sys.version_info.major == 2:
-        insert_code = insert_code2
+        _insert_code = _insert_code2
     else:
-        insert_code = insert_code3
+        _insert_code = _insert_code3
 
     src_file = sys.argv[1]
     src_dir = os.path.dirname(src_file)
@@ -88,20 +96,20 @@ if __name__ == '__main__':
     flag = 0
     # pass all the user args to the code in terms of args[]
     i = 2
-    insert_code += "args = {}\n"
+    _insert_code += "args = {}\n"
     while i < len(sys.argv):
         key = sys.argv[i].split('=')
         value = key[1]
         key = key[0]
         code = "args['" + key + "'] = " + str(value) + '\n'
-        insert_code += code
+        _insert_code += code
         i += 1
     # emit code to mask stderr
     code = "sys.stdout = open('" + tdd_file + ".stdout', 'w')\n"
-    insert_code += code
+    _insert_code += code
     code = "sys.stderr = open('" + tdd_file + ".stderr', 'w')\n"
-    insert_code += code
-    tdd_fp.write(insert_code)
+    _insert_code += code
+    tdd_fp.write(_insert_code)
 
     with open(src_file) as src_fp:
         for line in src_fp:
@@ -127,6 +135,30 @@ if __name__ == '__main__':
     while True:
         if proc.poll() is not None:
             break
+else:
+    __name__ = '__tdd__'
+    tdd_stderr=sys.stderr
+
+def tddish(name, condition):
+    global tdd_stderr
+    print('Test : ' + name, end='..........', file=tdd_stderr)
+    if not condition:
+        if tdd_stderr.isatty():
+            print('\\033[91m' + 'failed' + '\\033[0m', file=tdd_stderr)
+        else:
+            print('failed', file=tdd_stderr)
+        exit(1)
+    if tdd_stderr.isatty():
+        print('\\033[92m' + 'passed' + '\\033[0m', file=tdd_stderr)
+    else:
+        print('passed', file=tdd_stderr)
+
+def tddump(s:str):
+    global tdd_stderr
+    print(s, file=tdd_stderr)
+
+
+
 
 
 
