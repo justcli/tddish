@@ -22,6 +22,9 @@ def tddish(name, condition):\n\
         print('\\033[92m' + 'passed' + '\\033[0m', file=tdd_stderr)\n\
     else:\n\
         print('passed', file=tdd_stderr)\n\
+\n\
+def tddump(s:str):\n\
+    print(s, file=tdd_stderr)\n\
 \n\n"
 
 insert_code3 = "\n\
@@ -42,6 +45,9 @@ def tddish(name, condition):\n\
         print('\\033[92m' + 'passed' + '\\033[0m', file=tdd_stderr)\n\
     else:\n\
         print('passed', file=tdd_stderr)\n\
+\n\
+def tddump(s:str):\n\
+    print(s, file=tdd_stderr)\n\
 \n\n"
 
 if __name__ == '__main__':
