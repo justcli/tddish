@@ -18,5 +18,9 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    entry_points={  # Optional
+        'console_scripts': [
+            'tddish=tddish:main',
+        ],
+    },   python_requires='>=3.6',
 )
