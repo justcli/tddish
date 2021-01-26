@@ -136,10 +136,10 @@ if __name__ == '__main__':
         if proc.poll() is not None:
             break
 else:
-    __name__ = '__tdd__'
+    #__name__ = '__tdd__'
     tdd_stderr=sys.stderr
 
-def tddish(name, condition):
+def tdd(name, condition):
     global tdd_stderr
     print('Test : ' + name, end='..........', file=tdd_stderr)
     if not condition:
