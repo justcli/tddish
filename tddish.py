@@ -138,11 +138,18 @@ def main():
     while True:
         if proc.poll() is not None:
             break
+
+
+
+
 if __name__ == '__main__':
     main()
 else:
     #__name__ = '__tdd__'
     tdd_stderr=sys.stderr
+
+
+
 
 def tdd(name, condition):
     global tdd_stderr
@@ -157,6 +164,9 @@ def tdd(name, condition):
         print('\\033[92m' + 'passed' + '\\033[0m', file=tdd_stderr)
     else:
         print('passed', file=tdd_stderr)
+
+
+
 
 def tddump(s:str):
     global tdd_stderr
