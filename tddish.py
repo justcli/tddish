@@ -11,7 +11,7 @@ global tdd_stderr\n\
 __name__ = '__tdd__'\n\
 tdd_stderr=sys.stderr\n\
 global __name__\n\
-def tddish(name, condition):\n\
+def tdd(name, condition):\n\
     space = '.' * 64\n\
     space = space.replace('.', 'Test : ' + name, 1)[:64]\n\
     #print('Test : ' + name, end='..........', file=tdd_stderr)\n\
@@ -37,7 +37,7 @@ global __name__\n\
 global tdd_stderr\n\
 __name__ = '__tdd__'\n\
 tdd_stderr=sys.stderr\n\
-def tddish(name, condition):\n\
+def tdd(name, condition):\n\
     space = '.' * 64\n\
     space = space.replace('.', 'Test : ' + name, 1)[:64]\n\
     #print('Test : ' + name, end='..........', file=tdd_stderr)\n\
