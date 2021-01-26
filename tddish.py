@@ -58,7 +58,7 @@ def tddump(s:str):\n\
 \n\n"
 
 global tdd_stderr
-if __name__ == '__main__':
+def main():
     '''
     The tddish tool does the followings:
     1. Create a temporary file .<your source filename> in the source directory
@@ -78,6 +78,9 @@ if __name__ == '__main__':
     else:
         _insert_code = _insert_code3
 
+    if len(sys.argv) < 2:
+        print("Target python filename missing.")
+        exit(1)
     src_file = sys.argv[1]
     src_dir = os.path.dirname(src_file)
     src_file = os.path.basename(src_file)
@@ -135,6 +138,8 @@ if __name__ == '__main__':
     while True:
         if proc.poll() is not None:
             break
+if __name__ == '__main__':
+    main()
 else:
     #__name__ = '__tdd__'
     tdd_stderr=sys.stderr
