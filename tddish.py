@@ -59,7 +59,7 @@ def tddump(s:str):\n\
 
 global tdd_stderr
 def main():
-    '''
+    """
     The tddish tool does the followings:
     1. Create a temporary file .<your source filename> in the source directory
     2. Copy the source file to the temp file
@@ -68,10 +68,8 @@ def main():
     Usage:
     tddish {source file to test} [space seperated args in key=val format]
     tddish {source file to test} [gaps=0 touches=2]
-    '''
-    import stat
+    """
     import sys
-    from shutil import copyfile
     _insert_code = ''
     if  sys.version_info.major == 2:
         _insert_code = _insert_code2
