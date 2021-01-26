@@ -18,7 +18,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    entry_points={  # Optional
+    entry_points={
         'console_scripts': [
             'tddish=tddish:main',
         ],
