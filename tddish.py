@@ -87,8 +87,6 @@ def main():
 
     src_fp = tdd_fp = None
     try:
-        #copyfile(src_file, tdd_file)
-        #src_fp = open(src_file, 'R')
         tdd_fp = open(tdd_file, 'w+')
     except Exception as e:
         print('Can not create file (temporary) in ' + src_dir + ' folder.', file=sys.stderr)
@@ -143,7 +141,6 @@ def main():
 if __name__ == '__main__':
     main()
 else:
-    #__name__ = '__tdd__'
     tdd_stderr=sys.stderr
 
 
