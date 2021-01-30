@@ -5,6 +5,14 @@ import sys
 
 _insert_code2 = "\n\
 from __future__ import print_function\n\
+def _tdd_excepthook(ex, msg, bt):\n\
+    global tdd_stderr\n\
+    sys.stderr = tdd_stderr\n\
+    src = bt.tb_frame.f_code.co_filename\n\
+    line = str(bt.tb_lineno)\n\
+    m = ex.__name__ + ' exception at line ' + line + ' (Hint :  ' + str(msg) + ' )\\n'\n\
+    print(m, file=tdd_stderr)\n\
+    exit(1)\n\n\
 def tdd(name, condition):\n\
     space = '.' * 64\n\
     space = space.replace('.', 'Test : ' + name, 1)[:64]\n\
@@ -24,7 +32,46 @@ def tddump(s:str):\n\
     print(s, file=tdd_stderr)\n\
 \n\n"
 
+
+
+
 _insert_code3 = "\n\
+def err_line(n):\n\
+    import os\n\
+    global tdd_stderr\n\
+    line_nr = 0\n\
+    src_file = sys.argv[0]\n\
+    src_dir = os.path.dirname(src_file)\n\
+    src_file = os.path.basename(src_file)\n\
+    tdd_file = src_file\n\
+    #src_file = src_file\n\
+    src_file = src_file[1:]\n\
+    tdd_file = os.path.join(src_dir, tdd_file)\n\
+    src_file = os.path.join(src_dir, src_file)\n\
+    srch_line = ''\n\
+    with open(tdd_file, 'r') as fp:\n\
+        while srch_line := fp.readline():\n\
+            line_nr += 1\n\
+            if line_nr == n:\n\
+                break\n\
+        if n != line_nr:\n\
+            return 0\n\
+    line_nr = 0\n\
+    with open(src_file, 'r') as fp:\n\
+        while line := fp.readline():\n\
+            line_nr += 1\n\
+            if line.strip() == srch_line.strip():\n\
+                return line_nr\n\
+    return 0\n\n\
+def _tdd_excepthook(ex, msg, bt):\n\
+    global tdd_stderr\n\
+    sys.stderr = tdd_stderr\n\
+    src = bt.tb_frame.f_code.co_filename\n\
+    line = str(bt.tb_lineno)\n\
+    line = err_line(int(line))\n\
+    m = ex.__name__ + ' exception at line ' + str(line) + ' (Hint :  ' + str(msg) + ' )\\n'\n\
+    print(m, file=tdd_stderr)\n\
+    exit(1)\n\
 def tdd(name, condition):\n\
     global tdd_stderr\n\
     space = '.' * 64\n\
@@ -46,11 +93,26 @@ def tddump(s:str):\n\
     print(s, file=tdd_stderr)\n\
 \n\n"
 
+
+
+def _tdd_excepthook(ex, msg, bt):
+    global tdd_stderr
+    sys.stderr = tdd_stderr
+    src = bt.tb_frame.f_code.co_filename
+    line = str(bt.tb_lineno)
+    m = ex.__name__ + " exception at line " + str(line) +\
+        " (Hint :  " + str(msg) + " )\n"
+    print(m, file=tdd_stderr)
+    exit(1)
+
+
+
 if __name__ != '__main__':
     global tdd_stderr
     tdd_stderr = sys.stderr
     sys.stdout = open('.' + os.path.basename(__file__) + '.stdout', 'w')
     sys.stderr = open('.' + os.path.basename(__file__) + '.stderr', 'w')
+    sys.excepthook = _tdd_excepthook
 
 
 
@@ -107,6 +169,7 @@ def _tddmain():
         code = "args['" + key + "'] = " + str(value) + '\n'
         _insert_code += code
         i += 1
+    _insert_code += "sys.excepthook = _tdd_excepthook\n"
     tdd_fp.write(_insert_code)
 
     with open(src_file) as src_fp:
