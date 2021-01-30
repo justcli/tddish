@@ -38,9 +38,9 @@ global tdd_stderr\n\
 __name__ = '__tdd__'\n\
 tdd_stderr=sys.stderr\n\
 def tdd(name, condition):\n\
+    global tdd_stderr\n\
     space = '.' * 64\n\
     space = space.replace('.', 'Test : ' + name, 1)[:64]\n\
-    #print('Test : ' + name, end='..........', file=tdd_stderr)\n\
     print(space, end='', file=tdd_stderr)\n\
     if not condition:\n\
         if tdd_stderr.isatty():\n\
@@ -54,6 +54,7 @@ def tdd(name, condition):\n\
         print('passed', file=tdd_stderr)\n\
 \n\
 def tddump(s:str):\n\
+    global tdd_stderr\n\
     print(s, file=tdd_stderr)\n\
 \n\n"
 
@@ -67,11 +68,10 @@ def main():
     4. Change the __name__ to __tdd__ to avoid running main
     Usage:
     tddish {source file to test} [space seperated args in key=val format]
-    tddish {source file to test} [gaps=0 touches=2]
     """
     import sys
     _insert_code = ''
-    if  sys.version_info.major == 2:
+    if sys.version_info.major == 2:
         _insert_code = _insert_code2
     else:
         _insert_code = _insert_code3
@@ -88,7 +88,7 @@ def main():
     src_fp = tdd_fp = None
     try:
         tdd_fp = open(tdd_file, 'w+')
-    except Exception as e:
+    except Exception:
         print('Can not create file (temporary) in ' + src_dir + ' folder.', file=sys.stderr)
         exit(1)
 
@@ -125,7 +125,7 @@ def main():
 
     # the .<> file is ready...run it.
     import subprocess
-    if  sys.version_info.major == 2:
+    if sys.version_info.major == 2:
         cmd = ['python', tdd_file]
     else:
         cmd = ['python3', tdd_file]
@@ -141,7 +141,7 @@ def main():
 if __name__ == '__main__':
     main()
 else:
-    tdd_stderr=sys.stderr
+    tdd_stderr = sys.stderr
 
 
 
@@ -166,14 +166,4 @@ def tdd(name, condition):
 def tddump(s:str):
     global tdd_stderr
     print(s, file=tdd_stderr)
-
-
-
-
-
-
-
-
-
-
 
