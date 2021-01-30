@@ -5,16 +5,9 @@ import sys
 
 _insert_code2 = "\n\
 from __future__ import print_function\n\
-import sys\n\
-global __name__\n\
-global tdd_stderr\n\
-__name__ = '__tdd__'\n\
-tdd_stderr=sys.stderr\n\
-global __name__\n\
 def tdd(name, condition):\n\
     space = '.' * 64\n\
     space = space.replace('.', 'Test : ' + name, 1)[:64]\n\
-    #print('Test : ' + name, end='..........', file=tdd_stderr)\n\
     print(space, end='', file=tdd_stderr)\n\
     if not condition:\n\
         if tdd_stderr.isatty():\n\
@@ -32,11 +25,6 @@ def tddump(s:str):\n\
 \n\n"
 
 _insert_code3 = "\n\
-import sys\n\
-global __name__\n\
-global tdd_stderr\n\
-__name__ = '__tdd__'\n\
-tdd_stderr=sys.stderr\n\
 def tdd(name, condition):\n\
     global tdd_stderr\n\
     space = '.' * 64\n\
@@ -58,8 +46,15 @@ def tddump(s:str):\n\
     print(s, file=tdd_stderr)\n\
 \n\n"
 
-global tdd_stderr
-def main():
+if __name__ != '__main__':
+    global tdd_stderr
+    tdd_stderr = sys.stderr
+    sys.stdout = open('.' + os.path.basename(__file__) + '.stdout', 'w')
+    sys.stderr = open('.' + os.path.basename(__file__) + '.stderr', 'w')
+
+
+
+def _tddmain():
     """
     The tddish tool does the followings:
     1. Create a temporary file .<your source filename> in the source directory
@@ -69,7 +64,7 @@ def main():
     Usage:
     tddish {source file to test} [space seperated args in key=val format]
     """
-    import sys
+    global tdd_stderr
     _insert_code = ''
     if sys.version_info.major == 2:
         _insert_code = _insert_code2
@@ -89,13 +84,22 @@ def main():
     try:
         tdd_fp = open(tdd_file, 'w+')
     except Exception:
-        print('Can not create file (temporary) in ' + src_dir + ' folder.', file=sys.stderr)
+        print('Can not create file (temporary) in ' + src_dir + ' folder.',
+              file=sys.stderr)
         exit(1)
 
     flag = 0
     # pass all the user args to the code in terms of args[]
     i = 2
-    _insert_code += "args = {}\n"
+    code = "import sys\n" +\
+            "global __name__\n" +\
+            "global tdd_stderr\n" +\
+            "__name__ = '__tdd__'\n" +\
+            "tdd_stderr = sys.stderr\n" +\
+            "args = {}\n"
+    code += "sys.stdout = open('" + tdd_file + ".stdout', 'w')\n"
+    code += "sys.stderr = open('" + tdd_file + ".stderr', 'w')\n"
+    tdd_fp.write(code)
     while i < len(sys.argv):
         key = sys.argv[i].split('=')
         value = key[1]
@@ -103,11 +107,6 @@ def main():
         code = "args['" + key + "'] = " + str(value) + '\n'
         _insert_code += code
         i += 1
-    # emit code to mask stderr
-    code = "sys.stdout = open('" + tdd_file + ".stdout', 'w')\n"
-    _insert_code += code
-    code = "sys.stderr = open('" + tdd_file + ".stderr', 'w')\n"
-    _insert_code += code
     tdd_fp.write(_insert_code)
 
     with open(src_file) as src_fp:
@@ -119,6 +118,10 @@ def main():
                 continue
             elif line == "'''\n" and flag == 1:
                 flag = 0
+                continue
+            elif 'from' in  line and 'tddish' in line:
+                continue
+            elif 'import' in  line and 'tddish' in line:
                 continue
             tdd_fp.write(line)
         tdd_fp.flush()
@@ -137,26 +140,24 @@ def main():
 
 
 
-
 if __name__ == '__main__':
-    main()
-else:
-    tdd_stderr = sys.stderr
-
+    _tddmain()
 
 
 
 def tdd(name, condition):
     global tdd_stderr
-    print('Test : ' + name, end='..........', file=tdd_stderr)
+    space = '.' * 64
+    space = space.replace('.', 'Test : ' + name, 1)[:64]
+    print(space, end='', file=tdd_stderr)
     if not condition:
         if tdd_stderr.isatty():
-            print('\\033[91m' + 'failed' + '\\033[0m', file=tdd_stderr)
+            print('\033[91m' + 'failed' + '\033[0m', file=tdd_stderr)
         else:
             print('failed', file=tdd_stderr)
         exit(1)
     if tdd_stderr.isatty():
-        print('\\033[92m' + 'passed' + '\\033[0m', file=tdd_stderr)
+        print('\033[92m' + 'passed' + '\033[0m', file=tdd_stderr)
     else:
         print('passed', file=tdd_stderr)
 
