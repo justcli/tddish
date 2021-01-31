@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+__version__ = '1.0.0'
 import os
 import sys
 
@@ -98,7 +98,6 @@ def tddump(s:str):\n\
 def _tdd_excepthook(ex, msg, bt):
     global tdd_stderr
     sys.stderr = tdd_stderr
-    src = bt.tb_frame.f_code.co_filename
     line = str(bt.tb_lineno)
     m = ex.__name__ + " exception at line " + str(line) +\
         " (Hint :  " + str(msg) + " )\n"
@@ -182,9 +181,9 @@ def _tddmain():
             elif line == "'''\n" and flag == 1:
                 flag = 0
                 continue
-            elif 'from' in  line and 'tddish' in line:
+            elif 'from' in line and 'tddish' in line:
                 continue
-            elif 'import' in  line and 'tddish' in line:
+            elif 'import' in line and 'tddish' in line:
                 continue
             tdd_fp.write(line)
         tdd_fp.flush()
