@@ -132,9 +132,6 @@ def _tddmain():
     else:
         _insert_code = _insert_code3
 
-    if len(sys.argv) < 2:
-        print("Target python filename missing.")
-        exit(1)
     src_file = sys.argv[1]
     src_dir = os.path.dirname(src_file)
     src_file = os.path.basename(src_file)
@@ -201,8 +198,47 @@ def _tddmain():
             break
 
 
+def uninstall() -> int:
+    # get the import_path
+    import_path = sys.path[-1] + '/'
+    cli_path = '/usr/local/bin/'
+    cmd1 = 'rm ' + cli_path + 'tddish 1>/dev/null 2>&1'
+    cmd2 = 'rm -rf ' + import_path + 'tddish 1>/dev/null 2>&1'
+    r = os.system(cmd1)
+    if r:
+        print("Error uninstalling tddish. Try running as sudo e.g. > sudo tddish -uninstall")
+        print("Or you can uninstall manually by running the following two commands :")
+        print(cmd1)
+        print(cmd2)
+        return 1
+
+    r = os.system(cmd2)
+    if r:
+        print("Error uninstalling tddish. Try running as sudo e.g. > sudo tddish -uninstall")
+        print("Or you can uninstall manually by running the following command :")
+        print(cmd2)
+        return 1
+    print('tddish is uninstalled from your computer.')
+    return 0
+
+
 
 if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print("Target python filename missing.")
+        print("Usage:\n\
+To run tddish test cases:\n\
+> tddish myapp.py [space seperated user app argument(s) in key=value format]\n\
+E.g.\n\
+> tddish app1.py\n\
+> tddish myapp.py maxusers=100 print=disabled\n\
+or\n\
+To uninstall tddish:\n\
+> tddish -uninstall")
+        exit(1)
+
+    if sys.argv[1] == '-uninstall':
+        exit(uninstall())
     _tddmain()
 
 
