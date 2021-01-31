@@ -8,10 +8,18 @@ if [ $? -ne 0 ];then
 	exit 1
 fi
 
-import_path=`python3 -c "import sys;print(sys.path[-1] + '/')"`
+import_path=`python3 -c "import sys;print(sys.path[-1] + '/tddish')"`
 cli_path="/usr/local/bin/"
 
 # copy the tddish.py as module
+mkdir $import_path
+if [ $? -ne 0 ];then
+	echo "Unable to copy files to "$import_path\
+			 ". Try running the script as sudo e.g. > sudo ./install.sh"
+	exit 1
+fi
+import_path=$import_path"/"
+
 cp ./tddish.py __init__.py $import_path
 if [ $? -ne 0 ];then
 	echo "Unable to copy files to "$import_path\
@@ -34,5 +42,5 @@ fi
 echo "Files copied to "$cli_path":"
 echo "tddish"
 rm ./tddish
-echo "Installaiton done!."
+echo "Installation done!."
 
