@@ -4,18 +4,47 @@ import os
 import sys
 
 _insert_code2 = "\n\
-from __future__ import print_function\n\
+def err_line(n):\n\
+    import os\n\
+    from __future__ import print_function\n\
+    global tdd_stderr\n\
+    line_nr = 0\n\
+    src_file = sys.argv[0]\n\
+    src_dir = os.path.dirname(src_file)\n\
+    src_file = os.path.basename(src_file)\n\
+    tdd_file = src_file\n\
+    #src_file = src_file\n\
+    src_file = src_file[1:]\n\
+    tdd_file = os.path.join(src_dir, tdd_file)\n\
+    src_file = os.path.join(src_dir, src_file)\n\
+    srch_line = ''\n\
+    with open(tdd_file, 'r') as fp:\n\
+        while srch_line := fp.readline():\n\
+            line_nr += 1\n\
+            if line_nr == n:\n\
+                break\n\
+        if n != line_nr:\n\
+            return 0\n\
+    line_nr = 0\n\
+    with open(src_file, 'r') as fp:\n\
+        while line := fp.readline():\n\
+            line_nr += 1\n\
+            if line.strip() == srch_line.strip():\n\
+                return line_nr\n\
+    return 0\n\n\
 def _tdd_excepthook(ex, msg, bt):\n\
     global tdd_stderr\n\
     sys.stderr = tdd_stderr\n\
     src = bt.tb_frame.f_code.co_filename\n\
     line = str(bt.tb_lineno)\n\
-    m = ex.__name__ + ' exception at line ' + line + ' (Hint :  ' + str(msg) + ' )\\n'\n\
+    line = err_line(int(line))\n\
+    m = ex.__name__ + ' exception at line ' + str(line) + ' (Hint :  ' + str(msg) + ' )\\n'\n\
     print(m, file=tdd_stderr)\n\
-    exit(1)\n\n\
+    exit(1)\n\
 def tdd(name, condition):\n\
+    global tdd_stderr\n\
     space = '.' * 64\n\
-    space = space.replace('.', 'Test : ' + name, 1)[:64]\n\
+    space = space.replace('.', 'tddish : ' + name, 1)[:64]\n\
     print(space, end='', file=tdd_stderr)\n\
     if not condition:\n\
         if tdd_stderr.isatty():\n\
@@ -23,12 +52,13 @@ def tdd(name, condition):\n\
         else:\n\
             print('failed', file=tdd_stderr)\n\
         exit(1)\n\
-    if tdd_err.isatty():\n\
+    if tdd_stderr.isatty():\n\
         print('\\033[92m' + 'passed' + '\\033[0m', file=tdd_stderr)\n\
     else:\n\
         print('passed', file=tdd_stderr)\n\
 \n\
 def tddump(s:str):\n\
+    global tdd_stderr\n\
     print(s, file=tdd_stderr)\n\
 \n\n"
 
@@ -75,7 +105,7 @@ def _tdd_excepthook(ex, msg, bt):\n\
 def tdd(name, condition):\n\
     global tdd_stderr\n\
     space = '.' * 64\n\
-    space = space.replace('.', 'Test : ' + name, 1)[:64]\n\
+    space = space.replace('.', 'tddish : ' + name, 1)[:64]\n\
     print(space, end='', file=tdd_stderr)\n\
     if not condition:\n\
         if tdd_stderr.isatty():\n\
