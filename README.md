@@ -11,7 +11,7 @@ tddish app1.py debug=enabled maxdepth=100 level=super
 ## Install
 You can install tddish by either cloning this repo or downloading the tar file.
 ```
-> gh repo clone justcli/tddish
+> git clone git@github.com:justcli/tddish.git
 or
 > curl -LO https://github.com/justcli/tddish/releases/download/tddish-v1.0/tddish.tar.gz
 or
