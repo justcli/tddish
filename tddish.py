@@ -192,7 +192,7 @@ def _tddmain():
         key = sys.argv[i].split('=')
         value = key[1]
         key = key[0]
-        code = "args['" + key + "'] = " + str(value) + '\n'
+        code = "args['" + key + "'] = " + "'" + str(value) + "'" + '\n'
         _insert_code += code
         i += 1
     _insert_code += "sys.excepthook = _tdd_excepthook\n"
