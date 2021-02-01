@@ -49,7 +49,7 @@ tddish : add():1…………………………………………passed
 tddish : add():2…………………………………………passed
 ```
 
-All the print from your code is written to .\<src filename\>.stderr and .\<src filename\>.stdout files. When using tddish as import, the stdout and stderr is written to .tddish.py.stdout and .tddish.py.stderr respectively.
+All the print from your code is written to .\<src filename\>.stderr and .\<src filename\>.stdout files. When using tddish as module, the stdout and stderr is written to .tddish.py.stdout and .tddish.py.stderr respectively.
 
 In case, you need to print something to the terminal from the test case, you can use the function tddump(str) funtion.
 
