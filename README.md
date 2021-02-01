@@ -1,4 +1,4 @@
-# tddish
+# # tddish
 **tddish** is a TDD (Test Driven Development) tool for python coders. The tool gives the Test-As-You-Code experience to code writers. The idea is that as the coder writes a function, he/she would can also write the test code for that function.
 
 ## Usage
@@ -8,7 +8,7 @@ tddish \<pyhton filename\> [\<argname\>=\<argvalue\> \<argname\>=\<argvalue\> ..
 tddish app.py
 tddish app1.py debug=enabled maxdepth=100 level=super
 
-## How to install
+## Install
 You can install tddish by either cloning this repo or downloading the tar file.
 ```
 > gh repo clone justcli/tddish
@@ -25,8 +25,7 @@ then running the following commands.
 ```
 
 
-## How to uninstall
-You can uninstall tddish like this:
+###### To uninstall
 
 ```
 > tddish -uninstall
@@ -50,9 +49,8 @@ tddish : add():1…………………………………………passed
 tddish : add():2…………………………………………passed
 ```
 
-The docstring (starting with ‘’’tdd) tells the tddish that the code within the docstring is test code. The tddish() function is like the python assert. It takes two parameters, 1. the test-case name and 2. the test condition. If the condition is False, it reports the test case as failed. so, tddish(“test1”, add(1,1) == 3) would fail. The test-case name should be such that the coder can easily search for it in the code. One way of naming test case is to use the function name and a seq num together (as shown in the code above).
 
-#### Testing with data
+#### Testing with user data
 
 The *tddish* docstring can contain any valid python code. This can be used to define data to test a function. E.g
 
@@ -69,7 +67,7 @@ tdd('srch()1:', srch('de', hay) == False)
 '''
 ```
 
-#### Testing with command line argument
+#### Testing with user argument
 The coder can also pass command-line argument. Let’s say the file under test is mycode.py. It needs two command-line arguments namely *count* and *logfile*. The coder can pass it to using the following command.
 
 `tddish mycode.py count=10 logfile=./debug.log`
@@ -88,8 +86,54 @@ tdd('verify_user()1:', verify_user('Falcon') == False)
 '''
 ```
 
-When the above code is tested using tddish like
+The above code shows the following tddish report.
 
-`tddish display.py user=Harrier`
+```
+tddish : verify_user()1:…………………………………passed
+tddish : verify_user()1:…………………………………passed
+```
 
-The test-case will pass.
+#### Using tddish as module
+**tddish** can be used as module as well. When you run the following code, tdd report is written out. Note  
+
+```
+from tddish import *
+def add(n1:int, n2:int) -> int:
+    return n1 + n2
+#'''tddish
+tdd('add():1', add(2,3) == 5)
+tdd('add():2', add(0,3) != 2)
+#'''
+```
+that the *‘’’tddish* header and the *‘’’* footer is commented out. This helps the coder run the test code for the latest function from the IDE itself. After the tests are run, the tddish header (‘’’tddish) and the footer (‘’’) can be uncommented.
+
+## Jenkins Integration
+To run the test cases as part of Jenkins (or some CI/CD framework), the tddish command should be run with the target source file as argument. While using tddish as part of test automation, you should avoid user arguments. Instead, you can set the data in the testcase. E.g. For the code below
+```
+def verify_user(s:str):
+    if s == args['user']:
+        return True
+    return False
+```
+Use the following test case (when under automation test framework)
+```
+# myapp.py
+'''tddish
+args = {}
+args[‘user’] = ‘Harrier’
+tdd('verify_user()1:', verify_user('Harrier'))
+tdd('verify_user()1:', verify_user('Falcon') == False)
+'''
+> tddish myapp.py
+```
+instead of
+```
+# myapp.py
+'''tddish
+tdd('verify_user()1:', verify_user('Harrier'))
+tdd('verify_user()1:', verify_user('Falcon') == False)
+'''
+> tddish myapp.py user=Harrier
+```
+
+
