@@ -119,7 +119,7 @@ def verify_user(s:str):
         return True
     return False
 ```
-Use the following test case (when under automation test framework)
+When used under automation test framework, write your test case the follwoing way
 ```
 # myapp.py
 '''tddish
@@ -139,5 +139,6 @@ tdd('verify_user()1:', verify_user('Falcon') == False)
 '''
 > tddish myapp.py user=Harrier
 ```
+**Try to avoid passing user arguments when testing under automation framework.**
 
 
