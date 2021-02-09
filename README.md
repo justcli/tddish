@@ -110,7 +110,7 @@ tdd('add():1', add(2,3) == 5)
 tdd('add():2', add(0,3) != 2)
 #'''
 ```
-that the *‘’’tddish* header and the *‘’’* footer is commented out. This helps the coder run the test code for the latest function from the IDE itself. After the tests are run, the tddish header (‘’’tddish) and the footer (‘’’) can be uncommented.
+that the *‘’’tddish* header and the *‘’’* footer is commented out. This helps the coder run the test code for the latest function from the IDE itself. After the tests are run, the tddish header (‘’’tddish) and the footer (‘’’) can be uncommented again.
 
 ## Jenkins Integration
 To run the test cases as part of Jenkins (or some CI/CD framework), the tddish command should be run with the target source file as argument. While using tddish as part of test automation, you should avoid user arguments. Instead, you can set the data in the testcase. E.g. For the code below
@@ -120,7 +120,7 @@ def verify_user(s:str):
         return True
     return False
 ```
-When used under automation test framework, write your test case the follwoing way
+When used under automation test framework, write your test case the following way
 ```
 # myapp.py
 '''tddish
