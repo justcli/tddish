@@ -199,6 +199,17 @@ def uninstall() -> int:
 
 
 def tdd(name, condition, nonstop=0):
+    """
+    Arguments:
+        name(str)       : Name of the testcase
+        condition(bool) : Condition to test for
+        nonstop(int)    : set to 1 if you do not want to stop on testcase failure
+    Example:
+    def add(i:int, j:int) -> int:
+        return i + j
+    tdd("test1", add(1,2) == 3)
+    tdd("test1", add(0,0) == 0, nonstop=1)
+    """
     global tdd_stderr
     space = '.' * 64
     space = space.replace('.', 'Test: ' + name + ' ', 1)[:64]
