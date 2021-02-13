@@ -3,67 +3,6 @@ __version__ = '1.0.0'
 import os
 import sys
 
-_insert_code2 = "\n\
-def err_line(n):\n\
-    import os\n\
-    from __future__ import print_function\n\
-    global tdd_stderr\n\
-    line_nr = 0\n\
-    src_file = sys.argv[0]\n\
-    src_dir = os.path.dirname(src_file)\n\
-    src_file = os.path.basename(src_file)\n\
-    tdd_file = src_file\n\
-    #src_file = src_file\n\
-    src_file = src_file[1:]\n\
-    tdd_file = os.path.join(src_dir, tdd_file)\n\
-    src_file = os.path.join(src_dir, src_file)\n\
-    srch_line = ''\n\
-    with open(tdd_file, 'r') as fp:\n\
-        while srch_line := fp.readline():\n\
-            line_nr += 1\n\
-            if line_nr == n:\n\
-                break\n\
-        if n != line_nr:\n\
-            return 0\n\
-    line_nr = 0\n\
-    with open(src_file, 'r') as fp:\n\
-        while line := fp.readline():\n\
-            line_nr += 1\n\
-            if line.strip() == srch_line.strip():\n\
-                return line_nr\n\
-    return 0\n\n\
-def _tdd_excepthook(ex, msg, bt):\n\
-    global tdd_stderr\n\
-    sys.stderr = tdd_stderr\n\
-    src = bt.tb_frame.f_code.co_filename\n\
-    line = str(bt.tb_lineno)\n\
-    line = err_line(int(line))\n\
-    m = ex.__name__ + ' exception at line ' + str(line) + ' (Hint :  ' + str(msg) + ' )\\n'\n\
-    print(m, file=tdd_stderr)\n\
-    exit(1)\n\
-def tdd(name, condition):\n\
-    global tdd_stderr\n\
-    space = '.' * 64\n\
-    space = space.replace('.', 'tddish : ' + name, 1)[:64]\n\
-    print(space, end='', file=tdd_stderr)\n\
-    if not condition:\n\
-        if tdd_stderr.isatty():\n\
-            print('\\033[91m' + 'failed' + '\\033[0m', file=tdd_stderr)\n\
-        else:\n\
-            print('failed', file=tdd_stderr)\n\
-        exit(1)\n\
-    if tdd_stderr.isatty():\n\
-        print('\\033[92m' + 'passed' + '\\033[0m', file=tdd_stderr)\n\
-    else:\n\
-        print('passed', file=tdd_stderr)\n\
-\n\
-def tddump(s:str):\n\
-    global tdd_stderr\n\
-    print(s, file=tdd_stderr)\n\
-\n\n"
-
-
-
 
 _insert_code3 = "\n\
 def err_line(n):\n\
@@ -97,26 +36,32 @@ def _tdd_excepthook(ex, msg, bt):\n\
     global tdd_stderr\n\
     sys.stderr = tdd_stderr\n\
     src = bt.tb_frame.f_code.co_filename\n\
-    line = str(bt.tb_lineno)\n\
+    while bt:\n\
+        line = bt.tb_lineno\n\
+        bt = bt.tb_next\n\
+    #line = str(bt.tb_lineno)\n\
     line = err_line(int(line))\n\
     m = ex.__name__ + ' exception at line ' + str(line) + ' (Hint :  ' + str(msg) + ' )\\n'\n\
     print(m, file=tdd_stderr)\n\
     exit(1)\n\
-def tdd(name, condition):\n\
+def tdd(name, condition,nonstop=0):\n\
     global tdd_stderr\n\
     space = '.' * 64\n\
-    space = space.replace('.', 'tddish : ' + name, 1)[:64]\n\
+    space = space.replace('.', 'Test: ' + name + ' ', 1)[:64]\n\
     print(space, end='', file=tdd_stderr)\n\
     if not condition:\n\
         if tdd_stderr.isatty():\n\
-            print('\\033[91m' + 'failed' + '\\033[0m', file=tdd_stderr)\n\
+            print('\\033[91m' + ' failed' + '\\033[0m', file=tdd_stderr)\n\
         else:\n\
-            print('failed', file=tdd_stderr)\n\
-        exit(1)\n\
+            print(' failed', file=tdd_stderr)\n\
+        if not nonstop:\n\
+            exit(1)\n\
+        else:\n\
+            return\n\
     if tdd_stderr.isatty():\n\
-        print('\\033[92m' + 'passed' + '\\033[0m', file=tdd_stderr)\n\
+        print('\\033[92m' + ' passed' + '\\033[0m', file=tdd_stderr)\n\
     else:\n\
-        print('passed', file=tdd_stderr)\n\
+        print(' passed', file=tdd_stderr)\n\
 \n\
 def tddump(s:str):\n\
     global tdd_stderr\n\
@@ -128,7 +73,12 @@ def tddump(s:str):\n\
 def _tdd_excepthook(ex, msg, bt):
     global tdd_stderr
     sys.stderr = tdd_stderr
-    line = str(bt.tb_lineno)
+    over = 0
+    line = 0
+    while bt:
+        line = bt.tb_lineno
+        bt = bt.tb_next
+    #line = str(bt.tb_lineno)
     m = ex.__name__ + " exception at line " + str(line) +\
         " (Hint :  " + str(msg) + " )\n"
     print(m, file=tdd_stderr)
@@ -136,16 +86,7 @@ def _tdd_excepthook(ex, msg, bt):
 
 
 
-if __name__ != '__main__':
-    global tdd_stderr
-    tdd_stderr = sys.stderr
-    sys.stdout = open('.' + os.path.basename(__file__) + '.stdout', 'w')
-    sys.stderr = open('.' + os.path.basename(__file__) + '.stderr', 'w')
-    sys.excepthook = _tdd_excepthook
-
-
-
-def _tddmain():
+def _tddmain(target):
     """
     The tddish tool does the followings:
     1. Create a temporary file .<your source filename> in the source directory
@@ -157,10 +98,11 @@ def _tddmain():
     """
     global tdd_stderr
     _insert_code = ''
-    if sys.version_info.major == 2:
-        _insert_code = _insert_code2
-    else:
+    if sys.version_info.major == 3:
         _insert_code = _insert_code3
+    else:
+        print("tddish currently work on python3 only")
+        exit(1)
 
     src_file = sys.argv[1]
     src_dir = os.path.dirname(src_file)
@@ -172,8 +114,9 @@ def _tddmain():
     try:
         tdd_fp = open(tdd_file, 'w+')
     except Exception:
-        print('Can not create file (temporary) in ' + src_dir + ' folder.',
-              file=sys.stderr)
+        print(
+            'Can not create file (temporary) in ' + src_dir + ' folder.',
+            file=sys.stderr)
         exit(1)
 
     flag = 0
@@ -183,10 +126,12 @@ def _tddmain():
             "global __name__\n" +\
             "global tdd_stderr\n" +\
             "__name__ = '__tdd__'\n" +\
-            "tdd_stderr = sys.stderr\n" +\
+            "tdd_stderr = sys.stdout\n" +\
             "args = {}\n"
-    code += "sys.stdout = open('" + tdd_file + ".stdout', 'w')\n"
-    code += "sys.stderr = open('" + tdd_file + ".stderr', 'w')\n"
+    #code += "sys.stdout = open('" + os.path.basename(__file__) + ".stdout', 'w')\n"
+    #code += "sys.stdout = open('" + os.path.basename(__file__) + ".stderr', 'w')\n"
+    code += "sys.stdout = open('" + '.' + target + ".stdout', 'w+')\n"
+    code += "sys.stdout = open('" + '.' + target + ".stderr', 'w+')\n"
     tdd_fp.write(code)
     while i < len(sys.argv):
         key = sys.argv[i].split('=')
@@ -253,6 +198,35 @@ def uninstall() -> int:
 
 
 
+def tdd(name, condition, nonstop=0):
+    global tdd_stderr
+    space = '.' * 64
+    space = space.replace('.', 'Test: ' + name + ' ', 1)[:64]
+    print(space, end='', file=tdd_stderr)
+    if not condition:
+        if tdd_stderr.isatty():
+            print('\033[91m' + ' failed' + '\033[0m', file=tdd_stderr)
+        else:
+            print(' failed', file=tdd_stderr)
+        if not nonstop:
+            exit(1)
+        else:
+            return
+    if tdd_stderr.isatty():
+        print('\033[92m' + ' passed' + '\033[0m', file=tdd_stderr)
+    else:
+        print(' passed', file=tdd_stderr)
+
+
+
+
+def tddump(s:str):
+    global tdd_stderr
+    print(s, file=tdd_stderr)
+
+
+
+
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("Target python filename missing.")
@@ -269,30 +243,14 @@ To uninstall tddish:\n\
 
     if sys.argv[1] == '-uninstall':
         exit(uninstall())
-    _tddmain()
-
-
-
-def tdd(name, condition):
+    _tddmain(sys.argv[1])
+else:
     global tdd_stderr
-    space = '.' * 64
-    space = space.replace('.', 'Test : ' + name, 1)[:64]
-    print(space, end='', file=tdd_stderr)
-    if not condition:
-        if tdd_stderr.isatty():
-            print('\033[91m' + 'failed' + '\033[0m', file=tdd_stderr)
-        else:
-            print('failed', file=tdd_stderr)
-        exit(1)
-    if tdd_stderr.isatty():
-        print('\033[92m' + 'passed' + '\033[0m', file=tdd_stderr)
-    else:
-        print('passed', file=tdd_stderr)
-
-
-
-
-def tddump(s:str):
-    global tdd_stderr
-    print(s, file=tdd_stderr)
+    tdd_stderr = sys.stderr
+    target = sys.argv[0]
+    #sys.stdout = open('.' + os.path.basename(__file__) + '.stdout', 'w')
+    #sys.stderr = open('.' + os.path.basename(__file__) + '.stderr', 'w')
+    sys.stdout = open('.' + target + '.stdout', 'w+')
+    sys.stderr = open('.' + target + '.stderr', 'w+')
+    sys.excepthook = _tdd_excepthook
 
