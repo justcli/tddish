@@ -3,6 +3,7 @@ __version__ = '1.0.0'
 import os
 import sys
 
+__all__ = ['tdd', 'tddump']
 
 _insert_code3 = "\n\
 def err_line(n):\n\
@@ -41,7 +42,8 @@ def _tdd_excepthook(ex, msg, bt):\n\
         bt = bt.tb_next\n\
     #line = str(bt.tb_lineno)\n\
     line = err_line(int(line))\n\
-    m = ex.__name__ + ' exception at line ' + str(line) + ' (Hint :  ' + str(msg) + ' )\\n'\n\
+    m = ex.__name__ + ' exception at line ' + str(line) +\
+        ' (Hint :  ' + str(msg) + ' )\\n'\n\
     print(m, file=tdd_stderr)\n\
     exit(1)\n\
 def tdd(name, condition,nonstop=0):\n\
@@ -73,7 +75,6 @@ def tddump(s:str):\n\
 def _tdd_excepthook(ex, msg, bt):
     global tdd_stderr
     sys.stderr = tdd_stderr
-    over = 0
     line = 0
     while bt:
         line = bt.tb_lineno
@@ -128,8 +129,6 @@ def _tddmain(target):
             "__name__ = '__tdd__'\n" +\
             "tdd_stderr = sys.stdout\n" +\
             "args = {}\n"
-    #code += "sys.stdout = open('" + os.path.basename(__file__) + ".stdout', 'w')\n"
-    #code += "sys.stdout = open('" + os.path.basename(__file__) + ".stderr', 'w')\n"
     code += "sys.stdout = open('" + '.' + target + ".stdout', 'w+')\n"
     code += "sys.stdout = open('" + '.' + target + ".stderr', 'w+')\n"
     tdd_fp.write(code)
@@ -173,6 +172,7 @@ def _tddmain(target):
             break
 
 
+
 def uninstall() -> int:
     # get the import_path
     import_path = sys.path[-1] + '/'
@@ -181,16 +181,20 @@ def uninstall() -> int:
     cmd2 = 'rm -rf ' + import_path + 'tddish 1>/dev/null 2>&1'
     r = os.system(cmd1)
     if r:
-        print("Error uninstalling tddish. Try running as sudo e.g. > sudo tddish -uninstall")
-        print("Or you can uninstall manually by running the following two commands :")
+        print("Error uninstalling tddish. "
+              "Try running as sudo e.g. > sudo tddish -uninstall")
+        print("Or you can uninstall manually by running the following "
+              "two commands :")
         print(cmd1)
         print(cmd2)
         return 1
 
     r = os.system(cmd2)
     if r:
-        print("Error uninstalling tddish. Try running as sudo e.g. > sudo tddish -uninstall")
-        print("Or you can uninstall manually by running the following command :")
+        print("Error uninstalling tddish. "
+              "Try running as sudo e.g. > sudo tddish -uninstall")
+        print("Or you can uninstall manually by running the following "
+              "command :")
         print(cmd2)
         return 1
     print('tddish is uninstalled from your computer.')
@@ -230,11 +234,9 @@ def tdd(name, condition, nonstop=0):
 
 
 
-
 def tddump(s:str):
     global tdd_stderr
     print(s, file=tdd_stderr)
-
 
 
 
