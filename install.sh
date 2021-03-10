@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -e
+#set -e
 
 which python3 1>/dev/null 2>&1
 if [ $? -ne 0 ];then
@@ -12,11 +12,15 @@ import_path=`python3 -c "import sys;print(sys.path[-1] + '/tddish')"`
 cli_path="/usr/local/bin/"
 
 # copy the tddish.py as module
-mkdir $import_path
+mkdir $import_path 1>/dev/null 2>&1
 if [ $? -ne 0 ];then
-	echo "Unable to copy files to "$import_path\
-			 ". Try running the script as sudo e.g. > sudo ./install.sh"
-	exit 1
+	echo "$import_path is already there."
+	echo -n "Overwrite it [y|n]:"
+	read -r choice
+	if [ -z "$choice" ] || [ "$choice" != "y" ]; then
+		echo "Installation aborted."
+		exit 1
+	fi
 fi
 import_path=$import_path"/"
 
