@@ -130,7 +130,7 @@ def _tddmain(target):
             "tdd_stderr = sys.stdout\n" +\
             "args = {}\n"
     code += "sys.stdout = open('" + '.' + target + ".stdout', 'w+')\n"
-    code += "sys.stdout = open('" + '.' + target + ".stderr', 'w+')\n"
+    code += "sys.stderr = open('" + '.' + target + ".stderr', 'w+')\n"
     tdd_fp.write(code)
     while i < len(sys.argv):
         key = sys.argv[i].split('=')
