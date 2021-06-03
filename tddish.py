@@ -46,7 +46,7 @@ def _tdd_excepthook(ex, msg, bt):\n\
         ' (Hint :  ' + str(msg) + ' )\\n'\n\
     print(m, file=tdd_stderr)\n\
     exit(1)\n\
-def tdd(name, condition,nonstop=0):\n\
+def tdd(name, condition,nonstop=1):\n\
     global tdd_stderr\n\
     space = '.' * 64\n\
     space = space.replace('.', 'Test: ' + name + ' ', 1)[:64]\n\
@@ -202,17 +202,17 @@ def uninstall() -> int:
 
 
 
-def tdd(name, condition, nonstop=0):
+def tdd(name, condition, nonstop=1):
     """
     Arguments:
         name(str)       : Name of the testcase
         condition(bool) : Condition to test for
-        nonstop(int)    : set to 1 if you do not want to stop on testcase failure
+        nonstop(int)    : set to 0 if you want to stop on testcase failure
     Example:
     def add(i:int, j:int) -> int:
         return i + j
     tdd("test1", add(1,2) == 3)
-    tdd("test1", add(0,0) == 0, nonstop=1)
+    tdd("test1", add(0,0) == 0, nonstop=0)
     """
     global tdd_stderr
     space = '.' * 64
