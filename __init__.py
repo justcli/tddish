@@ -1,1 +1,1 @@
-from tddish.tddish import *
+from .tddish import *
